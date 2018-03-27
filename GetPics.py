@@ -1,27 +1,31 @@
 # -*- coding: utf-8 -*-
 
+import PicsPy
 import os
+from datetime import datetime
 from math import *
 from PIL import Image, ImageDraw #Подключим необходимые библиотеки. 
 
 global sImg
 
-dirs = []
-with open('dirs.txt','r') as f:
-    for line in f:
-        dirs.append(line.replace('\n',''))
-#print(dirs)
+mp = [] # карта пикселей
+esize = 8 # размер стороны четверти изображения
+sz = 2*esize
+size = (sz,sz)
+size2 = (2*sz,2*sz)
 
-#Каталог из которого будем брать изображения
-#dirs = ['e:\\MDM\\EX63']
-#directory = 'C:\\Users\\PovarnitsynDA\\Downloads\\Свадьба_ДЛ'
+#dirs = [] # внутренние каталоги
+
+# PicsPy.directory - Каталог из которого будем брать изображения
+# dirs = ['e:\\MDM\\EX63']
+# PicsPy.directory = 'C:\\Users\\PovarnitsynDA\\Downloads\\Свадьба_ДЛ'
 
 # Запись лога
 def log(s):
     f = open('log.txt', 'a', encoding='utf-8')
     if s:
         s = s.replace('\n',' \ ')
-        f.write(s + '\n')
+        f.write(str(datetime.today()) + ': ' + s + '\n')
         print(s)
     return True
 
@@ -85,11 +89,8 @@ def eNier(d):
     if iNier > 9: iNier = 9
     return iNier
 
-if __name__ == '__main__':                     
-    esize = 8
-    sz = 2*esize
-    size = (sz,sz)
-    size2 = (2*sz,2*sz)
+def Process(dirs):                     
+
     print('Загрузка данных...')
     # Работа с загрузкой данных
     for dr in dirs:
@@ -100,7 +101,7 @@ if __name__ == '__main__':
         for d, dirs, files in os.walk(dr):
             for f in files:
                 f = f.lower()
-                if f.endswith(('.jpg','.jpeg','.gif','.png')):
+                if f.endswith(('.jpg','.jpeg','.gif','.png','.bmp')):
                     imgs.append(d+'\\'+f)
 
         # работа с изображениями
@@ -120,12 +121,7 @@ if __name__ == '__main__':
                         continue # пропускаем файл
                     # получение картинки 16x16
                     imt.thumbnail(size2, Image.NEAREST)
-                    #imt = imt.resize(size) 
-                    #imt = imt.resize(size, Image.NEAREST)
                     imt = imt.resize(size, Image.ANTIALIAS)
-                    #imt.save(str(ip)+'_temp.jpg', 'JPEG')
-                    #imt.resize(size, Image.ANTIALIAS)
-                    #continue
                     if jpg.endswith(('.gif','.png')):
                         imt.convert('RGB').save('temp.jpg', 'JPEG')
                         imt = Image.open('temp.jpg')
@@ -148,7 +144,7 @@ if __name__ == '__main__':
                     dd = 10*(d1+d2+d3+d4)/4
                     simg += str(int(dd))
                     if (eNier(dd)) >= 0: simgs['2'] = eNier(dd)
-                    # Разница яроксти лево-право
+                    # Разница яркости лево-право
                     dd = (d1+d3)/2 - (d2+d4)/2
                     if dd >= 0:
                         idd = 5 + int(5*sqrt(dd))
@@ -159,7 +155,7 @@ if __name__ == '__main__':
                         dd = 5 + 5*sqrt(-dd)
                         simg += str(idd)
                     if (eNier(dd)) >= 0: simgs['3'] = eNier(dd)
-                    # Разница яроксти низ-верх
+                    # Разница яркости низ-верх
                     dd = (d1+d2)/2 - (d3+d4)/2
                     if dd >= 0:
                         idd = 5 + int(5*sqrt(dd))
@@ -170,7 +166,7 @@ if __name__ == '__main__':
                         dd = 5 + 5*sqrt(-dd)
                         simg += str(idd)
                     if (eNier(dd)) >= 0: simgs['4'] = eNier(dd)
-                    # Разница яроксти по диагоналям
+                    # Разница яркости по диагоналям
                     dd = (d1+d4)/2 - (d2+d3)/2
                     if dd >= 0:
                         idd = 5 + int(5*sqrt(dd))
