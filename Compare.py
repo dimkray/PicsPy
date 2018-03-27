@@ -1,4 +1,4 @@
-import os
+﻿import os
 import math
 
 # Работа с загрузкой данных

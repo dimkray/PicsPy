@@ -20,16 +20,12 @@ class Form(Frame):
 def SetDir(event):
     global dst
     dst = askdirectory()
+    dst = dst.replace('/','\\')
     print(dst)
     if dst != '':
         dir = []
-        for d, files, dirs in os.walk(dst):
-            if len(files) > 4000 and len(dirs) > 4:
-                for idir in dirs:
-                    print(idir)
-                    dir.append(idir)
-            else:
-                dir.append(dst)
+        for root, files, dirs in os.walk(dst):
+            dir.append(root)
         GetPics.Process(dir)
         Compare.Process()
 
@@ -43,7 +39,8 @@ def main():
     btn.pack()
     auto = Label(root, text="Автоудаление изображений до указанного % похожести:", font="Arial 8")
     auto.pack()
-    ent = Entry(root, width=10, bd=3, text='7')    ent.pack()
+    ent = Entry(root, width=10, bd=3, text='7')
+    ent.pack()
     app = Form(root)
     root.mainloop()  
  

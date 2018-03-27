@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw #Подключим необходимые би
 
 global sImg
 
-mp = [] # карта пикселей
+global mp # карта пикселей
 esize = 8 # размер стороны четверти изображения
 sz = 2*esize
 size = (sz,sz)
@@ -60,6 +60,7 @@ def eBrMap(img):
 
 # Определение яркости для четверти
 def eBr(img,bR,bT):
+    global mp
     pix = img.load() #Выгружаем значения пикселей.
     dx = 0; dy = 0
     if bR == True: dx = esize
@@ -90,26 +91,23 @@ def eNier(d):
     return iNier
 
 def Process(dirs):                     
-
+    global mp
     print('Загрузка данных...')
     # Работа с загрузкой данных
     for dr in dirs:
         imgs = [] # список всех изображений
         msave = {} # словарь для записи
-        #Получаем список файлов в переменную files 
-        # files = os.listdir(directory)
-        for d, dirs, files in os.walk(dr):
-            for f in files:
-                f = f.lower()
-                if f.endswith(('.jpg','.jpeg','.gif','.png','.bmp')):
-                    imgs.append(d+'\\'+f)
+        for f in os.listdir(dr):
+            f = f.lower()
+            if f.endswith(('.jpg','.jpeg','.gif','.png','.bmp')):
+                imgs.append(dr+'\\'+f)
 
         # работа с изображениями
         if len(imgs)>0:
             ip = 0
             log('--------------------------------------------------------------')
             log(dr)
-            print('Найдено: '+str(len(imgs))+' изображений!')
+            print('Найдено: '+str(len(imgs))+' изображений.')
             for jpg in imgs:
                 try:
                     jpg = jpg.replace('/','\\')
@@ -197,12 +195,12 @@ def Process(dirs):
                 except Exception as e:
                     log('! Ошибка в файле: ' + jpg + ' - ' + str(e))
 
-        print('Загрузка завершена!')
+            print('Загрузка завершена.')
 
-        # запись всех данных
-        for key in msave.keys():
-            with open('data/'+key+'.txt','a', encoding='utf-8') as f:
-                f.write('\n'.join(msave[key]) + '\n')
-        print('Данные сохранены!')
+            # запись всех данных
+            for key in msave.keys():
+                with open('data/'+key+'.txt','a', encoding='utf-8') as f:
+                    f.write('\n'.join(msave[key]) + '\n')
+            print('И данные сохранены.')
 
     print('!!! Загрузка всех каталогов успешно завершена !!!')
